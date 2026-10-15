@@ -274,7 +274,7 @@ function setFixed(k,val){if(DB.fixed[k]===val)delete DB.fixed[k];else DB.fixed[k
 /* ============================================================
    렌더링
    ============================================================ */
-const TABS=[['summary','요약'],['patterns','신규 계정패턴'],['grid','고정거래 월별'],['check','고정전표 체크'],['db','패턴DB'],['settings','설정']];
+const TABS=[['summary','요약'],['patterns','신규 계정패턴'],['grid','고정거래 월별'],['check','고정전표 체크'],['db','패턴DB']];
 function refresh(){compute();renderAll()}
 function renderAll(){renderMonthSel();renderStatus();renderTabs();renderView()}
 function renderMonthSel(){
@@ -296,8 +296,8 @@ function renderTabs(){
 function renderView(){
   const v=$('#view');
   const fid=document.activeElement?.id,pos=document.activeElement?.selectionStart;
-  if(!ROWS.length&&S.tab!=='settings'&&S.tab!=='db'){v.innerHTML=emptyView();return}
-  v.innerHTML=({summary:vSummary,patterns:vPatterns,grid:vGrid,check:vCheck,db:vDb,settings:vSettings}[S.tab])();
+  if(!ROWS.length&&S.tab!=='db'){v.innerHTML=emptyView();return}
+  v.innerHTML=({summary:vSummary,patterns:vPatterns,grid:vGrid,check:vCheck,db:vDb}[S.tab])();
   if(fid){const el=document.getElementById(fid);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
 }
 function emptyView(){
@@ -514,25 +514,6 @@ function vDb(){
    </div>`;
 }
 
-/* ---- 설정 ---- */
-function vSettings(){
-  const s=DB.settings;
-  return `<div class="card"><h2>판정 기준</h2><p class="sub">값을 바꾸면 바로 다시 계산됩니다. 설정은 패턴DB에 함께 저장됩니다.</p>
-   <div class="form">
-    <div><label>고정거래 최소 발생 월수</label><input type="number" min="1" data-set="minMonths" value="${s.minMonths}"><div class="hint">이력에서 이 개월 수 이상 나오면 반복거래로 봅니다.</div></div>
-    <div><label>고정거래 최소 발생 비율</label><input type="number" min="0" max="1" step="0.05" data-set="minRatio" value="${s.minRatio}"><div class="hint">이력 개월 수 × 비율 (예: 11개월 × 0.5 = 6개월). 위 월수와 비교해 큰 쪽을 씁니다.</div></div>
-    <div><label>매월 발생(누락 판정) 비율</label><input type="number" min="0" max="1" step="0.05" data-set="monthlyRatio" value="${s.monthlyRatio}"><div class="hint">이 비율 이상 달에 있던 항목이 검토월에 없으면 "누락"으로 표시합니다.</div></div>
-    <div><label>금액 변동 허용폭 (%)</label><input type="number" min="0" step="1" data-set="tol" value="${s.tol}"><div class="hint">이력 중앙값 대비 이 비율을 넘으면 "금액 변동"으로 표시합니다.</div></div>
-   </div></div>
-   <div class="card"><h2>정상패턴 관리</h2>
-    <p class="sub">검토월(${esc(S.month||'-')}) 이전의 모든 이력을 정상패턴으로 추가합니다. 이미 있는 패턴은 그대로 둡니다. 과거 데이터를 추가로 불러왔을 때도 다시 실행할 수 있습니다.</p>
-    <div class="toolbar"><button class="btn primary" data-act="seed" ${C.hist&&C.hist.length?'':'disabled'}>과거 이력으로 정상패턴 수집</button>
-    <button class="btn" data-act="resetdb">패턴DB 초기화</button></div>
-    <p class="muted" style="font-size:12px;margin:8px 0 0">${DEMO?'체험판에서는 판단 결과가 저장되지 않으며, 새로고침하면 처음 상태로 돌아갑니다.':''}</p>
-    <p class="muted real-only" style="font-size:12px;margin:8px 0 0">패턴DB는 이 브라우저에 자동 저장되지만, 브라우저 데이터가 지워지면 사라질 수 있습니다. "패턴DB 저장"으로 JSON 파일을 Dropbox 등에 보관하세요. Chrome/Edge에서는 한 번 저장 위치를 고르면 이후 변경 시 같은 파일에 자동 저장됩니다.</p>
-   </div>`;
-}
-
 /* ---- 모달 ---- */
 function openModal(html){$('#modal').innerHTML=html;$('#scrim').classList.add('open')}
 function closeModal(){$('#scrim').classList.remove('open')}
@@ -587,7 +568,6 @@ document.addEventListener('change',e=>{
   if(t.matches('[data-journal]')&&t.files.length){loadJournals([...t.files])}
   else if(t.dataset.sel){t.checked?S.selected.add(t.dataset.sel):S.selected.delete(t.dataset.sel);renderView()}
   else if(t.dataset.opt){S[t.dataset.opt]=t.checked;renderView()}
-  else if(t.dataset.set){const v=parseFloat(t.value);if(!isNaN(v)){DB.settings[t.dataset.set]=v;saveDB();compute();renderTabs();renderStatus()}}
 });
 let qTimer;
 document.addEventListener('input',e=>{
@@ -620,7 +600,6 @@ document.addEventListener('click',e=>{
   else if(d.act==='sample')loadSample();
   else if(d.act==='selall'){C.newPatterns.filter(g=>g.status==='todo'&&(S.kind==='all'||g.kind===S.kind)).forEach(g=>S.selected.add(g.pkey));renderView()}
   else if(d.act==='seed'){if(confirm(`${C.hist[0]} ~ ${C.hist[C.hist.length-1]} 전표의 모든 거래처·계정 조합을 정상패턴으로 등록합니다.\n(과거 이력에 오류 기표가 있었다면 그것도 정상으로 등록되니, 이후 패턴DB 탭에서 정리할 수 있습니다.)`))seedFromHistory()}
-  else if(d.act==='resetdb'){if(confirm('정상패턴·판단기록·고정/제외 지정을 모두 지웁니다. 계속할까요?\n(먼저 "패턴DB 저장"으로 백업하는 것을 권장합니다)')){const st=DB.settings;DB=defaultDB();DB.settings=st;saveDB();refresh()}}
   else if(d.fix)setFixed(d.k,d.fix);
   else if(d.unfix){delete DB.fixed[d.unfix];saveDB();refresh()}
   else if(d.delpat){delete DB.patterns[d.delpat];saveDB();refresh()}
