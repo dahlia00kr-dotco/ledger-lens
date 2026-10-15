@@ -323,15 +323,9 @@ function seedBanner(){
 
 /* ---- 요약 ---- */
 function demoIntro(){
-  const t=(tab,l)=>`<button class="chip" data-tab="${tab}">${l}</button>`;
-  return `<section class="hero-red"><div class="eyebrow">SAMPLE DATA · 체험판</div>
-   <h2>12월 전표에 숨은<br>이슈를 찾아보세요</h2>
-   <p>가상의 제조회사 2025년 전표입니다. 1~11월 이력으로 정상패턴을 수집해 두었고, 검토월인 12월에 누락·중복·계정 오류·금액 변동을 일부러 심어 두었습니다.</p>
-   <div class="toolbar">
-    ${t('patterns','계정 오류 2건 · 신규 거래처')}${t('check','렌탈료·감가상각·대출이자 누락')}${t('check','전기요금·용역비 금액 변동')}${t('grid','경비보안 월정료 중복 입력')}
-   </div>
-   <div class="meta">샘플 엑셀 받기: ${SAMPLES.map(([u,n])=>`<a class="lnk" href="${u}" download="${n}">${n.replace('샘플_전표_','').replace('.xlsx','')}</a>`).join(' / ')} · 회사명·거래처명·금액은 모두 가상입니다.</div>
-  </section>`;
+  return `<div class="notice"><span class="tag t-new">SAMPLE</span>
+   <span>실무에서 쓰는 ERP 전표출력 엑셀 양식을 그대로 재현하고, 회사명·거래처·금액은 모두 <b>가상의 더미데이터</b>로 채웠습니다.</span>
+   <span class="muted">샘플 엑셀: ${SAMPLES.map(([u,n])=>`<a class="lnk" href="${u}" download="${n}">${n.replace('샘플_전표_','').replace('.xlsx','')}</a>`).join(' · ')}</span></div>`;
 }
 function vSummary(){
   const M=S.month,cur=C.cur,vcount=new Set(cur.map(r=>r.vid)).size,dr=cur.reduce((s,r)=>s+r.dr,0);
@@ -631,7 +625,7 @@ document.addEventListener('click',e=>{
   else if(d.unfix){delete DB.fixed[d.unfix];saveDB();refresh()}
   else if(d.delpat){delete DB.patterns[d.delpat];saveDB();refresh()}
 });
-window.addEventListener('beforeunload',e=>{if(dirty&&!fileHandle){e.preventDefault();e.returnValue=''}});
+if(!DEMO)window.addEventListener('beforeunload',e=>{if(dirty&&!fileHandle){e.preventDefault();e.returnValue=''}});
 if(DEMO){
   document.body.classList.add('demo');refresh();
   loadSample().then(()=>{if(ROWS.length&&!Object.keys(DB.patterns).length)seedFromHistory()});

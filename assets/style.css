@@ -59,16 +59,10 @@ main{padding:0 0 64px;flex:1}
 .card.soft{background:var(--soft);border-color:transparent}
 .card h2{font-size:26px;font-weight:800;letter-spacing:-.6px;margin-bottom:6px}
 .card .sub{color:var(--mute);margin:0 0 18px;font-size:15px}
-/* 레드 히어로 밴드 (체험판 안내) */
-.hero-red{background:var(--primary);color:var(--on-primary);border-radius:6px;padding:36px 36px 30px;margin-bottom:20px}
-.hero-red .eyebrow{font-size:12px;font-weight:800;letter-spacing:1.2px;opacity:.9}
-.hero-red h2{color:var(--on-primary);font-size:clamp(30px,4.2vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin:8px 0 12px}
-.hero-red p{margin:0;max-width:760px;font-size:16px;font-weight:300;line-height:1.6}
-.hero-red .toolbar{margin:22px 0 0}
-.hero-red .chip{background:transparent;color:#fff;border:1.5px solid #fff;font-weight:600}
-.hero-red .chip:hover{background:#fff;color:var(--primary)}
-.hero-red .meta{font-size:12px;margin-top:18px;opacity:.9}
-.hero-red .lnk{color:#fff}
+/* 샘플 데이터 안내 박스 */
+.notice{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;background:var(--soft);border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--ink)}
+.notice .tag{margin:0}
+.notice b{font-weight:700}
 /* 잉크 다크 밴드 */
 .banner{background:var(--dark);color:var(--on-dark);border-radius:6px;padding:28px 32px;margin-bottom:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .banner h3{color:var(--on-dark);font-size:22px;font-weight:800;letter-spacing:-.4px}
@@ -174,7 +168,7 @@ tr.sub td td{padding:7px 12px}
 
 @media (max-width:900px){.cols2{grid-template-columns:1fr}}
 @media (max-width:640px){
-  .wrap{padding:0 16px}.brand small{display:none}.card{padding:18px}.hero-red{padding:26px 20px}
+  .wrap{padding:0 16px}.brand small{display:none}.card{padding:18px}
   .modal{padding:20px}input[type=search]{min-width:0;width:100%}.topnav .btn{height:36px;padding:0 14px;font-size:13px}
 }
 body.demo .real-only{display:none}
