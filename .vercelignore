@@ -1,0 +1,7 @@
+.vercel
+.DS_Store
+*.xlsx
+!sample/*.xlsx
+전표검토_패턴DB*.json
+tools/
+README.md
